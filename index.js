@@ -145,7 +145,7 @@ async function uploadToCloudinary(filepath, publicId) {
 async function postToMastodon(text, url) {
   const status = await masto.v1.statuses.create({
     status: `${text}\n\nEscúchalo aquí: ${url}`,
-    visibility: 'private',
+    visibility: 'public',
   });
   return status.url;
 }
