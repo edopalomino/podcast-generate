@@ -164,6 +164,7 @@ async function main() {
   console.log('Publicando en Mastodon...');
   const tootUrl = await postToMastodon('Nuevo episodio de Super Happy Dev 🎧', cdnUrl);
   console.log('Publicado en:', tootUrl);
+  process.exit(0); // Finaliza el proceso exitosamente
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
