@@ -6,6 +6,7 @@ import { GoogleGenAI } from '@google/genai';
 import wav from 'wav';
 import cloudinaryLib from 'cloudinary';
 import { createRestAPIClient } from 'masto';
+import { randomUUID } from 'crypto';
 
 const RSS_FEEDS = [
   // IA
@@ -16,6 +17,9 @@ const RSS_FEEDS = [
   'https://nodejs.org/en/feed/blog.xml',
   'https://webkit.org/feed/',
   'https://www.typescriptlang.org/feed.xml',
+  'https://news.mit.edu/rss/topic/artificial-intelligence2',
+  'https://wired.com/feed/rss'
+
 ];
 
 const parser = new RSSParser();
@@ -157,10 +161,11 @@ async function main() {
   console.log('Generando guion del episodio...');
   const script = await buildScript(items);
   console.log('Generando audio TTS...');
-  const wavPath = await ttsMultiSpeaker(script);
+  const uuid = randomUUID();
+  const wavPath = await ttsMultiSpeaker(script, `episode-${uuid}.wav`);
   const dateTag = new Date().toISOString().slice(0,10);
   console.log('Subiendo episodio a Cloudinary...');
-  const cdnUrl = await uploadToCloudinary(wavPath, `shd-${dateTag}`);
+  const cdnUrl = await uploadToCloudinary(wavPath, `shd-${dateTag}-${uuid}`);
   console.log('Publicando en Mastodon...');
   const tootUrl = await postToMastodon('Nuevo episodio de Super Happy Dev 🎧', cdnUrl);
   console.log('Publicado en:', tootUrl);
