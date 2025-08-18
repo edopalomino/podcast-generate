@@ -18,8 +18,6 @@ const RSS_FEEDS = [
   'https://webkit.org/feed/',
   'https://www.typescriptlang.org/feed.xml',
   'https://news.mit.edu/rss/topic/artificial-intelligence2',
-  'https://wired.com/feed/rss'
-
 ];
 
 const parser = new RSSParser();
