@@ -1,3 +1,4 @@
+
 import 'dotenv/config';
 import RSSParser from 'rss-parser';
 import { JSDOM } from 'jsdom';
@@ -7,35 +8,17 @@ import wav from 'wav';
 import cloudinaryLib from 'cloudinary';
 import { createRestAPIClient } from 'masto';
 import { randomUUID } from 'crypto';
-
-const RSS_FEEDS = [
-  // IA
-  'https://ai.googleblog.com/feeds/posts/default?alt=rss',
-  'https://openai.com/blog/rss', 
-  // Web/dev
-  'https://developer.chrome.com/feeds/blog.xml',
-  'https://nodejs.org/en/feed/blog.xml',
-  'https://webkit.org/feed/',
-  'https://www.typescriptlang.org/feed.xml',
-  'https://news.mit.edu/rss/topic/artificial-intelligence2',
-];
+import { RSS_FEEDS, GEMINI_API_KEY, CLOUDINARY_CONFIG, MASTODON_CONFIG } from './config.js';
 
 const parser = new RSSParser();
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 // Cloudinary
 const cloudinary = cloudinaryLib.v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+cloudinary.config(CLOUDINARY_CONFIG);
 
 // Mastodon
-const masto = createRestAPIClient({
-  url: process.env.MASTODON_URL,
-  accessToken: process.env.MASTODON_TOKEN,
-});
+const masto = createRestAPIClient(MASTODON_CONFIG);
 
 // ---- Utils
 const hoursAgo = (h) => Date.now() - h * 3600_000;
@@ -55,7 +38,7 @@ async function extractArticleText(url) {
 }
 
 async function fetchRecentItems() {
-  const cutoff = hoursAgo(48);
+  const cutoff = hoursAgo(24 * 7);
   const items = [];
   for (const feed of RSS_FEEDS) {
     try {
